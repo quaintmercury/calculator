@@ -52,9 +52,3 @@ def rpn_calc():
 if __name__ == "__main__":
     """RPN Calculator as main program"""
     rpn_calc()
-
-
-
-
-
-

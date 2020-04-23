@@ -205,4 +205,3 @@ if __name__ == "__main__":
     while tokens.has_more():
         print(f"Token: {tokens.take()}")
         input("Press enter to continue")
-
