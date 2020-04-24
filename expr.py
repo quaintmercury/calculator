@@ -36,21 +36,55 @@ class IntConst(Expr):
         return f"IntConst({self.value})"
 
 
-class Plus(Expr):
+class Plus(BinOp):
+    """Expr + Expr"""
 
-    def __init__(self, left: 'expr', right: 'expr'):
-        self.left = left
-        self.right = right
-
-    def __str__(self) -> str:
-        """Implementations of __str__ should return the expression in algebraic notation"""
-        return f"({str(self.left)} + {str(self.right)})"
+    def __init__(self, left: Expr, right: Expr):
+        self._binop_init(left, right, "+", "Plus")
 
     def __repr__(self):
         return f"Plus({repr(self.left)}, {repr(self.right)})"
 
+
+    def _apply(self, left: int, right: int) -> int:
+        return left + right
+
+
+class Times(BinOp):
+    """left * right"""
+
+    def __init__(self, left: Expr, right: Expr):
+        self._binop_init(left, right, "*", "Times")
+
+    def _apply(self, left: int, right: int):
+        return left * right
+
+    def __repr__(self) -> str:
+        """Implementations of __repr__ should return a string that looks like
+        the constructor, e.g., Plus(IntConst(5), IntConst(4))
+        """
+        return f"Times({repr(self.left)}, {repr(self.right)})"
+
+
+class BinOp(Expr):
+
+    def __init__(self):
+        raise NotImplementedError("Do not instantiate BinOp")
+
+    def _binop_init(self, left: Expr, right: Expr, op_sym: str, op_name: str):
+        self.left = left
+        self.right = right
+        self.op_sym = op_sym
+        self.op_name = op_name
+
+    def __str__(self) -> str:
+        return f"({self.left} {self.op_sym} {self.right})"
+
+    def __repr__(self) -> str:
+        return f"{self.op_name}({repr(self.left)}, {repr(self.right)})"
+
     def eval(self) -> "IntConst":
-        """Implementations of eval should return an integer constant."""
+        """Each concrete subclass must define _apply(int, int)->int"""
         left_val = self.left.eval()
         right_val = self.right.eval()
-        return IntConst(left_val.value + right_val.value)
+        return IntConst(self._apply(left_val.value, right_val.value))
